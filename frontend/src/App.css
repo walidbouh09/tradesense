@@ -1,0 +1,527 @@
+/* TradeSense AI - Professional React App Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family:
+        "Inter",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Roboto",
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1d36 100%);
+    color: #ffffff;
+    min-height: 100vh;
+}
+
+.App {
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Login Container */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1d36 100%);
+    padding: 2rem;
+    flex-direction: column;
+}
+
+.status-indicator {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #b0bec5;
+}
+
+.status {
+    margin-left: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.status.online {
+    background: #4caf50;
+    color: white;
+}
+
+.status.offline {
+    background: #f44336;
+    color: white;
+}
+
+.status.checking {
+    background: #ff9800;
+    color: white;
+}
+
+/* Login Form */
+.login-form {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 4rem 3rem;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.login-form h1 {
+    color: #42a5f5;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #42a5f5, #1976d2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.login-form h2 {
+    color: #b0bec5;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 3rem;
+}
+
+.form-group {
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.7rem;
+    color: #b0bec5;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #42a5f5;
+    box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.form-group input::placeholder {
+    color: #666;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #42a5f5, #1976d2);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2rem;
+}
+
+.login-btn:hover {
+    background: linear-gradient(135deg, #1976d2, #115293);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(25, 118, 210, 0.3);
+}
+
+.demo-info {
+    background: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.demo-info p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #b0bec5;
+}
+
+.demo-info p:first-child {
+    font-weight: 600;
+    color: #4caf50;
+    margin-bottom: 1rem;
+}
+
+/* App Header */
+.app-header {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-header h1 {
+    color: #42a5f5;
+    font-size: 1.8rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #42a5f5, #1976d2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.user-info span {
+    color: #b0bec5;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.logout-btn {
+    padding: 0.6rem 1.2rem;
+    background: rgba(244, 67, 54, 0.15);
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    border-radius: 8px;
+    color: #ff5722;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.logout-btn:hover {
+    background: rgba(244, 67, 54, 0.25);
+    border-color: #f44336;
+}
+
+/* Dashboard */
+.dashboard {
+    padding: 3rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.welcome-message {
+    text-align: center;
+}
+
+.welcome-message h2 {
+    color: #42a5f5;
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.welcome-message p {
+    color: #b0bec5;
+    font-size: 1.2rem;
+    margin-bottom: 3rem;
+    font-weight: 300;
+}
+
+/* System Status */
+.system-status {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.status-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.status-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(66, 165, 245, 0.1);
+}
+
+.status-card h3 {
+    color: #42a5f5;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.status-card .status-indicator {
+    position: static;
+    display: inline-block;
+    background: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.status-card .status-indicator.online {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.status-card p {
+    color: #b0bec5;
+    font-size: 0.95rem;
+    font-family: "Courier New", monospace;
+    margin: 0;
+}
+
+/* Content Sections */
+.next-steps,
+.api-endpoints,
+.user-info-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.next-steps h3,
+.api-endpoints h3,
+.user-info-card h3 {
+    color: #42a5f5;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.next-steps ul,
+.api-endpoints ul {
+    list-style: none;
+    padding: 0;
+}
+
+.next-steps li,
+.api-endpoints li {
+    padding: 0.7rem 0;
+    color: #b0bec5;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.next-steps li:last-child,
+.api-endpoints li:last-child {
+    border-bottom: none;
+}
+
+.next-steps li {
+    color: #4caf50;
+}
+
+.api-endpoints li {
+    font-family: "Courier New", monospace;
+    font-size: 0.9rem;
+}
+
+.user-info-card p {
+    color: #b0bec5;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.user-info-card p:last-child {
+    border-bottom: none;
+}
+
+.user-info-card p strong {
+    color: #42a5f5;
+    font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .app-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .dashboard {
+        padding: 2rem 1rem;
+    }
+
+    .login-form {
+        margin: 1rem;
+        padding: 3rem 2rem;
+    }
+
+    .system-status {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-message h2 {
+        font-size: 1.8rem;
+    }
+
+    .welcome-message p {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-form h1 {
+        font-size: 2rem;
+    }
+
+    .login-form {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .dashboard {
+        padding: 1.5rem 1rem;
+    }
+
+    .app-header h1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.status-card,
+.next-steps,
+.api-endpoints,
+.user-info-card,
+.login-form {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.status.checking {
+    animation: pulse 1.5s infinite;
+}
+
+/* Loading States */
+.loading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0a0e27 0%, #1a1d36 100%);
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #1a1d36;
+    border-top: 4px solid #42a5f5;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(66, 165, 245, 0.5);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(66, 165, 245, 0.7);
+}
+
+/* Success and Error States */
+.success {
+    color: #4caf50;
+}
+
+.error {
+    color: #f44336;
+}
+
+.warning {
+    color: #ff9800;
+}
+
+.info {
+    color: #42a5f5;
+}

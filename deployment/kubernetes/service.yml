@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tradesense-api
+  namespace: tradesense
+  labels:
+    app: tradesense-api
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: tradesense-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics-service
+  namespace: tradesense
+  labels:
+    app: analytics-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: analytics-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: tradesense
+  labels:
+    app: postgres
+spec:
+  ports:
+  - port: 5432
+    protocol: TCP
+    name: postgres
+  selector:
+    app: postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: tradesense
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    protocol: TCP
+    name: redis
+  selector:
+    app: redis
+---
+# Load Balancer Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: tradesense-lb
+  namespace: tradesense
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:region:account:certificate/certificate-id"
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: nginx

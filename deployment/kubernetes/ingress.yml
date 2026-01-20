@@ -1,0 +1,69 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tradesense-ingress
+  namespace: tradesense
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "0.0.0.0/0"  # Configure properly
+spec:
+  tls:
+  - hosts:
+    - api.tradesense.ai
+    - analytics.tradesense.ai
+    secretName: tradesense-tls
+  rules:
+  - host: api.tradesense.ai
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tradesense-api
+            port:
+              number: 80
+  - host: analytics.tradesense.ai
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: analytics-service
+            port:
+              number: 80
+---
+# Webhook ingress (separate for security)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tradesense-webhooks
+  namespace: tradesense
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "54.187.174.169/32, 54.187.205.235/32, 54.187.216.72/32"  # Stripe IPs
+    nginx.ingress.kubernetes.io/rate-limit: "10"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+spec:
+  tls:
+  - hosts:
+    - webhooks.tradesense.ai
+    secretName: tradesense-webhooks-tls
+  rules:
+  - host: webhooks.tradesense.ai
+    http:
+      paths:
+      - path: /payments/webhooks
+        pathType: Prefix
+        backend:
+          service:
+            name: tradesense-api
+            port:
+              number: 80

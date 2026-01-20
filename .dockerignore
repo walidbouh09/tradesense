@@ -1,0 +1,80 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+docs/
+examples/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Environment files (except production)
+.env
+.env.local
+.env.*.local
+
+# Test files
+tests/
+test_*.py
+*_test.py
+pytest.ini
+
+# Scripts
+scripts/
+*.sh
+
+# Deployment
+deployment/
+nginx/
+
+# Frontend (for backend build)
+frontend/node_modules/
+frontend/build/
+frontend/.env
+
+# Backend (for frontend build)
+app/
+backend/
+database/
+requirements.txt
+*.py
+
+# Misc
+nul
+PROJECT_TREE.txt

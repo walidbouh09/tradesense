@@ -1,0 +1,89 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                    ⚠️  INSTRUCTIONS IMPORTANTES  ⚠️                          ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                                                                              │
+│  ❌ NE PAS UTILISER: http://localhost:3000                                   │
+│                                                                              │
+│  ✅ UTILISER:        http://localhost:5000                                   │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ POURQUOI?                                                                    ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Port 3000 = Votre frontend React/Next.js (NON MODIFIÉ)
+Port 5000 = Nouveau backend Flask (TOUTES LES NOUVELLES FONCTIONNALITÉS)
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ OUVREZ DANS VOTRE NAVIGATEUR:                                               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+1. Page d'accueil:
+   http://localhost:5000
+
+2. Santé du serveur:
+   http://localhost:5000/health
+
+3. Fonctionnalités:
+   http://localhost:5000/features
+
+4. Test paiement:
+   http://localhost:5000/test-payment
+
+5. Test marché marocain:
+   http://localhost:5000/test-morocco
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ CE QUE VOUS VERREZ:                                                         ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+✅ Belle page d'accueil avec design moderne
+✅ Statistiques du projet (3,500+ lignes de code)
+✅ Boutons pour tester chaque fonctionnalité
+✅ Réponses JSON en direct
+✅ Toutes les fonctionnalités implémentées
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ FONCTIONNALITÉS DISPONIBLES:                                                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+1. ✅ Schéma de base de données (6 tables)
+2. ✅ Simulation de paiement (CMI, Crypto, PayPal)
+3. ✅ Contrôle d'accès (Trading basé sur challenge)
+4. ✅ Marché marocain (Bourse de Casablanca)
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ VÉRIFICATION RAPIDE:                                                        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Le serveur fonctionne-t-il?
+→ Ouvrez: http://localhost:5000/health
+
+Vous devriez voir:
+{
+  "status": "healthy",
+  "message": "TradeSense AI fonctionne correctement",
+  "version": "1.0.0"
+}
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║ EN CAS DE PROBLÈME:                                                         ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+1. Vérifiez que vous utilisez le PORT 5000 (pas 3000)
+2. Vérifiez que le serveur tourne (voir ci-dessus)
+3. Rafraîchissez la page (F5)
+4. Lisez: OUVRIR_DANS_NAVIGATEUR.md
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                                                                              ║
+║                    🎉 PROFITEZ DE TRADESENSE AI! 🎉                          ║
+║                                                                              ║
+║                    http://localhost:5000                                     ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝

@@ -1,0 +1,48 @@
+Flask>=3.0.0
+SQLAlchemy>=2.0
+requests>=2.0
+# TradeSense AI Backend Requirements
+# ==================================
+# Production dependencies for Flask + SocketIO backend
+
+# Core Flask stack
+Flask==2.3.3
+Flask-CORS==4.0.0
+Flask-SocketIO==5.3.6
+
+# Web server and async support
+gunicorn==21.2.0
+eventlet==0.33.3
+
+# Database and caching
+SQLAlchemy==2.0.23
+psycopg2-binary==2.9.7
+redis==5.0.1
+
+# Authentication and security
+PyJWT==2.8.0
+
+# Data processing
+# Note: decimal module is built into Python 3.11
+
+# Market data integration
+yfinance==0.2.28
+requests==2.31.0
+beautifulsoup4==4.12.2
+lxml==4.9.3
+
+# Payment processing
+stripe==7.4.0
+
+# Email notifications
+flask-mail==0.9.1
+
+# Additional utilities
+python-dotenv==1.0.0
+
+# Logging and monitoring
+structlog==23.2.0
+
+# Production WSGI server requirements
+gevent==23.9.1
+greenlet==3.0.1

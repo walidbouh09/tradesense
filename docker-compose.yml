@@ -1,0 +1,254 @@
+# TradeSense AI - Fixed Production Stack
+# =======================================
+# Complete containerized deployment for prop trading platform
+#
+# Services:
+# - backend: FastAPI + async workers
+# - frontend: React app with Nginx
+# - postgres: Primary database (PostgreSQL 15)
+# - redis: Caching and message broker
+# - nginx: Reverse proxy and load balancer
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: tradesense_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tradesense
+      POSTGRES_USER: tradesense_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tradesense_pass}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/tradesense_schema.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tradesense_user -d tradesense"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tradesense_network
+
+  # Redis Cache & Message Broker
+  redis:
+    image: redis:7-alpine
+    container_name: tradesense_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-tradesense_redis}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-tradesense_redis}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tradesense_network
+
+  # FastAPI Backend + Workers
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: tradesense_backend
+    restart: unless-stopped
+    environment:
+      # FastAPI Configuration
+      PYTHONUNBUFFERED: "1"
+      PYTHONPATH: "/app/src"
+
+      # Database
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USERNAME: tradesense_user
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-tradesense_pass}
+      DB_DATABASE: tradesense
+      DATABASE_URL: postgresql+asyncpg://tradesense_user:${POSTGRES_PASSWORD:-tradesense_pass}@postgres:5432/tradesense
+
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-tradesense_redis}
+
+      # Security
+      SECRET_KEY: ${SECRET_KEY:-your-super-secret-key-change-in-production}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-jwt-secret-key-change-in-production}
+
+      # Application
+      DEBUG: "false"
+      ENVIRONMENT: production
+
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - tradesense_network
+    volumes:
+      - ./logs:/app/logs
+      - ./src:/app/src:ro
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tradesense_frontend
+    restart: unless-stopped
+    environment:
+      REACT_APP_API_URL: http://localhost:8000
+      REACT_APP_WS_URL: ws://localhost:8000
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - tradesense_network
+
+  # Nginx Reverse Proxy (Optional)
+  nginx:
+    image: nginx:alpine
+    container_name: tradesense_nginx
+    restart: unless-stopped
+    ports:
+      - "${NGINX_PORT:-80}:80"
+      - "${NGINX_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - tradesense_network
+    profiles:
+      - production
+
+  # Audit Writer Worker
+  audit-writer:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: tradesense_audit_writer
+    restart: unless-stopped
+    command: python -m src.workers.audit_writer.worker
+    environment:
+      # Same environment as backend
+      PYTHONUNBUFFERED: "1"
+      PYTHONPATH: "/app/src"
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USERNAME: tradesense_user
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-tradesense_pass}
+      DB_DATABASE: tradesense
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-tradesense_redis}
+      WORKER_TYPE: audit_writer
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - tradesense_network
+    volumes:
+      - ./logs:/app/logs
+      - ./src:/app/src:ro
+
+  # Payment Processor Worker
+  payment-processor:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: tradesense_payment_processor
+    restart: unless-stopped
+    command: python -m src.workers.payment_processor.worker
+    environment:
+      # Same environment as backend
+      PYTHONUNBUFFERED: "1"
+      PYTHONPATH: "/app/src"
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USERNAME: tradesense_user
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-tradesense_pass}
+      DB_DATABASE: tradesense
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-tradesense_redis}
+      WORKER_TYPE: payment_processor
+
+      # Payment provider configs (simulated)
+      STRIPE_API_KEY: ${STRIPE_API_KEY:-sk_test_placeholder}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_placeholder}
+      PAYPAL_API_KEY: ${PAYPAL_API_KEY:-paypal_placeholder}
+      PAYPAL_WEBHOOK_SECRET: ${PAYPAL_WEBHOOK_SECRET:-paypal_whsec_placeholder}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - tradesense_network
+    volumes:
+      - ./logs:/app/logs
+      - ./src:/app/src:ro
+
+networks:
+  tradesense_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# Service Interaction Flow:
+# ========================
+#
+# 1. Frontend (React) → Nginx → Backend (FastAPI)
+# 2. Backend ↔ PostgreSQL (persistent data)
+# 3. Backend ↔ Redis (caching, events)
+# 4. Backend → Redis Streams → Workers (async processing)
+# 5. Workers ↔ PostgreSQL (audit, payments)
+#
+# Development Setup:
+# ==================
+# docker-compose up -d postgres redis backend
+# docker-compose up frontend (for development with hot reload)
+#
+# Production Setup:
+# =================
+# docker-compose --profile production up -d
+#
+# Monitoring:
+# ===========
+# docker-compose ps
+# docker-compose logs -f [service]
+# docker-compose exec backend python -c "from src.main import app; print('Backend OK')"

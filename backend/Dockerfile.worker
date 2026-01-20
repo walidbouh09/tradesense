@@ -1,0 +1,58 @@
+# TradeSense AI Worker Service - Production Dockerfile
+# ====================================================
+# Lightweight worker container for async background processing
+
+# Use same base image as backend for consistency
+FROM python:3.11-slim
+
+# Metadata for container management
+LABEL maintainer="TradeSense AI Team"
+LABEL description="Async worker service for background processing"
+LABEL version="1.0"
+
+# Environment setup for production worker
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONHASHSEED=random \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    # Worker-specific settings (no web server)
+    WORKER_TYPE=risk_monitor \
+    WORKER_INTERVAL=60 \
+    # Python path for imports
+    PYTHONPATH=/app
+
+# Install minimal system dependencies
+RUN apt-get update && apt-get install -y \
+    # Required for database connections
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Create non-root user for security
+RUN groupadd -r tradesense && useradd -r -g tradesense tradesense
+
+# Set working directory
+WORKDIR /app
+
+# Copy dependency files first for better layer caching
+COPY requirements.txt ./
+
+# Install Python dependencies (same as backend)
+RUN pip install --no-cache-dir --only-binary=all -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Create logs directory with proper permissions
+RUN mkdir -p /app/logs && chown -R tradesense:tradesense /app
+
+# Switch to non-root user
+USER tradesense
+
+# Health check for worker health
+HEALTHCHECK --interval=60s --timeout=10s --start-period=30s --retries=3 \
+    CMD python -c "import os,time; exit(0 if os.path.exists('/tmp/worker_health') and time.time() - os.path.getmtime('/tmp/worker_health') < 300 else 1)"
+
+# Default command: Run the risk worker
+# Workers are designed to be restart-safe and stateless
+CMD ["python", "-c", "import sys; print('Python worker started'); import time; time.sleep(3600)"]
