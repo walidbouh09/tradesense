@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TradeSense AI - Quick Test</title>
+    <style>
+        body { font-family: Arial; background: #0a0e27; color: white; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #42a5f5; font-size: 2.5rem; }
+        .status { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin: 20px 0; }
+        .btn { background: #42a5f5; color: white; border: none; padding: 10px 20px; margin: 10px; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background: #1976d2; }
+        .response { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 5px; margin: 10px 0; font-family: monospace; }
+        .form { margin: 20px 0; }
+        .form input { padding: 10px; margin: 5px; border-radius: 5px; border: none; width: 250px; }
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>TradeSense AI</h1>
+            <p>Quick Test Interface</p>
+        </div>
+
+        <div class="status">
+            <h3>Server Status</h3>
+            <div id="status">Checking...</div>
+        </div>
+
+        <div class="status">
+            <h3>Login Test</h3>
+            <div class="form">
+                <input type="email" id="email" placeholder="Email" value="demo.trader@tradesense.ai">
+                <input type="password" id="password" placeholder="Password" value="demo123456">
+                <button class="btn" onclick="testLogin()">Login</button>
+            </div>
+        </div>
+
+        <div class="status">
+            <h3>API Tests</h3>
+            <button class="btn" onclick="testEndpoint('/health')">Health Check</button>
+            <button class="btn" onclick="testEndpoint('/api')">API Info</button>
+            <button class="btn" onclick="testEndpoint('/api/v1/portfolios')">Portfolios</button>
+            <button class="btn" onclick="testEndpoint('/api/v1/market/symbols')">Market Data</button>
+        </div>
+
+        <div class="status">
+            <h3>Response</h3>
+            <div id="response" class="response">Ready for testing...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+
+        async function checkStatus() {
+            try {
+                const response = await fetch(API_BASE + '/health');
+                if (response.ok) {
+                    document.getElementById('status').innerHTML = '<span class="success">✅ Server Online</span>';
+                } else {
+                    document.getElementById('status').innerHTML = '<span class="error">❌ Server Error</span>';
+                }
+            } catch (error) {
+                document.getElementById('status').innerHTML = '<span class="error">❌ Server Offline</span>';
+            }
+        }
+
+        async function testEndpoint(endpoint) {
+            try {
+                const response = await fetch(API_BASE + endpoint);
+                const data = await response.json();
+                document.getElementById('response').textContent =
+                    'Endpoint: ' + endpoint + '\n' +
+                    'Status: ' + response.status + '\n' +
+                    'Response:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('response').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function testLogin() {
+            try {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                const response = await fetch(API_BASE + '/api/v1/auth/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email, password})
+                });
+
+                const data = await response.json();
+                document.getElementById('response').textContent =
+                    'Login Test\n' +
+                    'Status: ' + response.status + '\n' +
+                    'Response:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('response').textContent = 'Login Error: ' + error.message;
+            }
+        }
+
+        // Check status on load
+        checkStatus();
+        setInterval(checkStatus, 10000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeSense AI - Test Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1d36 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #42a5f5;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #42a5f5, #1976d2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #b0bec5;
+            font-size: 1.1rem;
+        }
+
+        .main-container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .status-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .status-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(66, 165, 245, 0.1);
+        }
+
+        .status-card h3 {
+            color: #42a5f5;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .status-indicator {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .status-online {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .status-offline {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+
+        .status-checking {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+
+        .login-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .login-section h2 {
+            color: #42a5f5;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #b0bec5;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #42a5f5;
+            box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #42a5f5, #1976d2);
+            color: white;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1976d2, #115293);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(25, 118, 210, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #42a5f5;
+            border: 1px solid rgba(66, 165, 245, 0.3);
+            margin-right: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(66, 165, 245, 0.1);
+        }
+
+        .demo-info {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .demo-info p {
+            margin-bottom: 0.5rem;
+            color: #b0bec5;
+        }
+
+        .demo-info p:first-child {
+            font-weight: 600;
+            color: #4caf50;
+            margin-bottom: 1rem;
+        }
+
+        .api-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .api-section h3 {
+            color: #42a5f5;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .api-endpoints {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .api-endpoint {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #b0bec5;
+        }
+
+        .response-area {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #b0bec5;
+            min-height: 100px;
+            white-space: pre-wrap;
+        }
+
+        .spinner {
+            border: 3px solid rgba(66, 165, 245, 0.3);
+            border-top: 3px solid #42a5f5;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .status-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>TradeSense AI</h1>
+        <p>Professional Prop Trading Platform - Test Interface</p>
+    </div>
+
+    <div class="main-container">
+        <!-- System Status Section -->
+        <div class="status-section">
+            <div class="status-card">
+                <h3>Backend Status</h3>
+                <div id="backend-status" class="status-indicator status-checking">Checking...</div>
+                <p>http://localhost:5000</p></p>
+            </div>
+            <div class="status-card">
+                <h3>Frontend Status</h3>
+                <div class="status-indicator status-online">✅ Online</div>
+                <p>Test Interface Active</p>
+            </div>
+        </div>
+
+        <!-- Login Section -->
+        <div class="login-section">
+            <h2></h2>🔐 Test Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="demo.trader@tradesense.ai" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" value="demo123456" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login to TradeSense AI</button>
+            </form>
+
+            <div class="demo-info">
+                <p><strong>Demo Credentials:</strong></p>
+                <p>Email: demo.trader@tradesense.ai</p>
+                <p>Password: demo123456</p>
+                <p>Admin: admin@tradesense.ai / admin123456</p>
+            </div>
+        </div>
+
+        <!-- API Testing Section -->
+        <div class="api-section">
+            <h3>🧪 API Testing</h3>
+            <div class="api-endpoints">
+                <button class="btn btn-secondary" onclick="testEndpoint('/health')">Health Check</button>
+                <button class="btn btn-secondary" onclick="testEndpoint('/api')">API Info</button>
+                <button class="btn btn-secondary" onclick="testEndpoint('/api/v1/market/symbols')">Market Symbols</button>
+                <button class="btn btn-secondary" onclick="testLogin()">Test Login</button>
+            </div>
+            <div id="response" class="response-area">Click any button above to test API endpoints...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        let authToken = null;
+
+        // Check backend status on load
+        async function checkBackendStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const statusElement = document.getElementById('backend-status');
+
+                if (response.ok) {
+                    statusElement.textContent = '✅ Online';
+                    statusElement.className = 'status-indicator status-online';
+                } else {
+                    statusElement.textContent = '❌ Error';
+                    statusElement.className = 'status-indicator status-offline';
+                }
+            } catch (error) {
+                const statusElement = document.getElementById('backend-status');
+                statusElement.textContent = '❌ Offline';
+                statusElement.className = 'status-indicator status-offline';
+            }
+        }
+
+        // Test API endpoint
+        async function testEndpoint(endpoint) {
+            const responseArea = document.getElementById('response');
+            responseArea.innerHTML = '<div class="spinner"></div>';
+
+            try {
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'GET',
+                    headers: headers
+                });
+
+                const data = await response.json();
+                responseArea.textContent = `Status: ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                responseArea.textContent = `Error: ${error.message}\n\nMake sure the backend is running on ${API_BASE}`;
+            }
+        }
+
+        // Test login
+        async function testLogin() {
+            const responseArea = document.getElementById('response');
+            responseArea.innerHTML = '<div class="spinner"></div>';
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    authToken = data.tokens.access_token;
+                    responseArea.textContent = `✅ Login Successful!\n\nUser: ${data.user.full_name}\nEmail: ${data.user.email}\nRole: ${data.user.role}\n\nToken: ${authToken}\n\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    responseArea.textContent = `❌ Login Failed!\n\nStatus: ${response.status}\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                responseArea.textContent = `❌ Connection Error: ${error.message}\n\nMake sure the backend is running on ${API_BASE}`;
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            testLogin();
+        });
+
+        // Check status on load
+        window.addEventListener('load', function() {
+            checkBackendStatus();
+
+            // Check every 30 seconds
+            setInterval(checkBackendStatus, 30000);
+        });
+    </script>
+</body>
+</html>

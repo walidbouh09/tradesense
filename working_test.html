@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeSense AI - Working Test Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1d36 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            color: #42a5f5;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #42a5f5, #1976d2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #b0bec5;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .status-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: all 0.5s;
+        }
+
+        .status-card:hover::before {
+            left: 100%;
+        }
+
+        .status-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(66, 165, 245, 0.15);
+        }
+
+        .status-card h3 {
+            color: #42a5f5;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-indicator {
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-online {
+            background: rgba(76, 175, 80, 0.25);
+            color: #4caf50;
+            border: 2px solid rgba(76, 175, 80, 0.4);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .status-offline {
+            background: rgba(244, 67, 54, 0.25);
+            color: #f44336;
+            border: 2px solid rgba(244, 67, 54, 0.4);
+            box-shadow: 0 0 20px rgba(244, 67, 54, 0.3);
+        }
+
+        .status-checking {
+            background: rgba(255, 152, 0, 0.25);
+            color: #ff9800;
+            border: 2px solid rgba(255, 152, 0, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .url-display {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            color: #b0bec5;
+            font-size: 0.95rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .test-section {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .test-section h2 {
+            color: #42a5f5;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .login-form {
+            max-width: 500px;
+            margin: 0 auto 3rem auto;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: #b0bec5;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #42a5f5;
+            box-shadow: 0 0 0 4px rgba(66, 165, 245, 0.15);
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .btn {
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #42a5f5, #1976d2);
+            color: white;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 25px rgba(66, 165, 245, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1976d2, #0d47a1);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(66, 165, 245, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #42a5f5;
+            border: 2px solid rgba(66, 165, 245, 0.3);
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(66, 165, 245, 0.15);
+            border-color: #42a5f5;
+            transform: translateY(-2px);
+        }
+
+        .api-section {
+            text-align: center;
+        }
+
+        .api-endpoints {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .response-area {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            color: #b0bec5;
+            min-height: 150px;
+            white-space: pre-wrap;
+            text-align: left;
+            overflow-x: auto;
+        }
+
+        .demo-info {
+            background: rgba(76, 175, 80, 0.15);
+            border: 2px solid rgba(76, 175, 80, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .demo-info h3 {
+            color: #4caf50;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .demo-info p {
+            margin-bottom: 0.8rem;
+            color: #b0bec5;
+            font-size: 1rem;
+        }
+
+        .demo-info .credential {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            margin: 0.5rem;
+            display: inline-block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(66, 165, 245, 0.3);
+            border-top: 4px solid #42a5f5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success {
+            color: #4caf50;
+        }
+
+        .error {
+            color: #f44336;
+        }
+
+        .warning {
+            color: #ff9800;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .status-section {
+                grid-template-columns: 1fr;
+            }
+
+            .test-section {
+                padding: 2rem;
+            }
+
+            .api-endpoints {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn-secondary {
+                margin-right: 0;
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>TradeSense AI</h1>
+            <p>Professional Prop Trading Platform - Working Test Interface</p>
+        </div>
+
+        <!-- System Status -->
+        <div class="status-section">
+            <div class="status-card">
+                <h3>Backend Status</h3>
+                <div id="backend-status" class="status-indicator status-checking">Checking...</div>
+                <div class="url-display">http://localhost:5000</div>
+            </div>
+            <div class="status-card">
+                <h3>Test Interface</h3>
+                <div class="status-indicator status-online">✅ Ready</div>
+                <div class="url-display">Direct Browser Access</div>
+            </div>
+        </div>
+
+        <!-- Login Test Section -->
+        <div class="test-section">
+            <h2></h2>🔐 Authentication Test</h2>
+            <div class="login-form">
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" value="demo.trader@tradesense.ai">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" value="demo123456">
+                </div>
+                <button class="btn btn-primary" onclick="testLogin()">🚀 Test Login</button>
+            </div>
+
+            <div class="demo-info">
+                <h3>Demo Credentials Available</h3>
+                <p></p><strong>Demo Trader:</strong></p>
+                <div class="credential">demo.trader@tradesense.ai</div>
+                <div class="credential">demo123456</div>
+                <p><strong>Administrator:</strong></p>
+                <div class="credential">admin@tradesense.ai</div>
+                <div class="credential">admin123456</div>
+            </div>
+        </div>
+
+        <!-- API Testing Section -->
+        <div class="test-section">
+            <h2>🧪 API Endpoint Testing</h2>
+            <div class="api-section">
+                <div class="api-endpoints">
+                    <button class="btn btn-secondary" onclick="testEndpoint('/health')">Health Check</button>
+                    <button class="btn btn-secondary" onclick="testEndpoint('/api')">API Info</button>
+                    <button class="btn btn-secondary" onclick="testEndpoint('/api/v1/portfolios')">Portfolios</button>
+                    <button class="btn btn-secondary" onclick="testEndpoint('/api/v1/market/symbols')">Market Data</button>
+                    <button class="btn btn-secondary" onclick="testEndpoint('/api/v1/challenges')">Challenges</button>
+                    <button class="btn btn-secondary" onclick="createTestTrade()">Execute Trade</button>
+                </div>
+                <div id="response" class="response-area">Click any button above to test API endpoints...
+
+Ready to test TradeSense AI backend services.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        let authToken = null;
+
+        // Check backend status on load
+        async function checkBackendStatus() {
+            const statusElement = document.getElementById('backend-status');
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+                const response = await fetch(`${API_BASE}/health`, {
+                    signal: controller.signal,
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                });
+
+                clearTimeout(timeoutId);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    statusElement.textContent = '✅ Online';
+                    statusElement.className = 'status-indicator status-online';
+                    console.log('Backend health check passed:', data);
+                } else {
+                    statusElement.textContent = '❌ Error';
+                    statusElement.className = 'status-indicator status-offline';
+                    console.error('Backend health check failed:', response.status);
+                }
+            } catch (error) {
+                statusElement.textContent = '❌ Offline';
+                statusElement.className = 'status-indicator status-offline';
+                console.error('Backend connection failed:', error);
+
+                // Show connection guidance
+                updateResponse(`❌ Backend Connection Failed
+
+Error: ${error.message}
+
+🔧 Troubleshooting Steps:
+1. Make sure the backend server is running
+2. Check that Python is installed
+3. Navigate to the TradeSense directory
+4. Run: python simple_server.py
+5. Wait for "Server starting on: http://localhost:5000"
+6. Refresh this page
+
+💡 Quick Start:
+Open terminal/command prompt and run:
+cd C:\\Users\\WALID\\Desktop\\tradesense
+python simple_server.py`);
+            }
+        }
+
+        // Update response area
+        function updateResponse(content) {
+            const responseArea = document.getElementById('response');
+            responseArea.textContent = content;
+        }
+
+        // Show loading spinner
+        function showLoading() {
+            const responseArea = document.getElementById('response');
+            responseArea.innerHTML = '<div class="spinner"></div><p>Processing request...</p>';
+        }
+
+        // Test API endpoint
+        async function testEndpoint(endpoint) {
+            showLoading();
+
+            try {
+                const headers = {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                };
+
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    method: 'GET',
+                    headers: headers,
+                    signal: controller.signal,
+                    mode: 'cors'
+                });
+
+                clearTimeout(timeoutId);
+
+                const data = await response.json();
+                const statusText = response.ok ? 'SUCCESS' : 'ERROR';
+
+                updateResponse(`🌐 ${endpoint}
+Status: ${response.status} ${statusText}
+Time: ${new Date().toLocaleTimeString()}
+
+${JSON.stringify(data, null, 2)}`);
+
+            } catch (error) {
+                updateResponse(`❌ Request Failed: ${endpoint}
+
+Error: ${error.message}
+
+🔍 Possible Issues:
+- Backend server is not running
+- CORS configuration problem
+- Network connectivity issue
+- Server crashed or restarting
+
+💡 Solution:
+Make sure to run: python simple_server.py`);
+            }
+        }
+
+        // Test login
+        async function testLogin() {
+            showLoading();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                updateResponse('❌ Please enter both email and password');
+                return;
+            }
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+                const response = await fetch(`${API_BASE}/api/v1/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                    signal: controller.signal,
+                    mode: 'cors'
+                });
+
+                clearTimeout(timeoutId);
+                const data = await response.json();
+
+                if (response.ok) {
+                    authToken = data.tokens.access_token;
+                    updateResponse(`✅ LOGIN SUCCESSFUL!
+
+👤 User Details:
+Name: ${data.user.full_name}
+Email: ${data.user.email}
+Role: ${data.user.role}
+Status: ${data.user.status}
+Experience: ${data.user.experience_level}
+
+🔑 Authentication Token:
+${authToken}
+
+📊 Response:
+${JSON.stringify(data, null, 2)}
+
+✨ You can now test other API endpoints!`);
+                } else {
+                    updateResponse(`❌ LOGIN FAILED
+
+Status: ${response.status}
+Error: ${data.error?.message || 'Unknown error'}
+
+Response:
+${JSON.stringify(data, null, 2)}`);
+                }
+            } catch (error) {
+                updateResponse(`❌ Login Request Failed
+
+Error: ${error.message}
+
+🔧 Check that backend is running:
+python simple_server.py`);
+            }
+        }
+
+        // Create test trade
+        async function createTestTrade() {
+            if (!authToken) {
+                updateResponse(`❌ Authentication Required
+
+Please login first using the test credentials:
+- demo.trader@tradesense.ai / demo123456`);
+                return;
+            }
+
+            showLoading();
+
+            const tradeData = {
+                symbol: 'EURUSD',
+                side: 'buy',
+                quantity: 1000,
+                order_type: 'market'
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/api/v1/trades`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(tradeData),
+                    mode: 'cors'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    updateResponse(`🎉 TRADE EXECUTED SUCCESSFULLY!
+
+📈 Trade Details:
+Symbol: ${data.trade.symbol}
+Side: ${data.trade.side}
+Quantity: ${data.trade.quantity}
+Price: ${data.trade.executed_price}
+P&L: $${data.trade.pnl}
+Status: ${data.trade.status}
+
+📊 Full Response:
+${JSON.stringify(data, null, 2)}`);
+                } else {
+                    updateResponse(`❌ Trade Failed: ${JSON.stringify(data, null, 2)}`);
+                }
+            } catch (error) {
+                updateResponse(`❌ Trade Request Failed: ${error.message}`);
+            }
+        }
+
+        // Auto-refresh backend status
+        function startStatusMonitoring() {
+            checkBackendStatus();
+            setInterval(checkBackendStatus, 30000); // Check every 30 seconds
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            startStatusMonitoring();
+            updateResponse('🚀 TradeSense AI Test Interface Ready!
+
+1. First check that Backend Status shows "✅ Online"
+2. If offline, start the backend server:
+   python simple_server.py
+3. Test login with demo credentials
+4. Explore API endpoints
+
+Ready for testing!');
+        });
+
+        // Handle form submission
+        document.getElementById('email').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testLogin();
+            }
+        });
+
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testLogin();
+            }
+        });
+    </script>
+</body>
+</html>
